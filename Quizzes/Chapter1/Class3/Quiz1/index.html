@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>0984 Chapter 1 Class 3 Quiz</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:16px/1.5 Arial,sans-serif;color:#172033;background:white}
+header{text-align:center;padding:26px 15px;border-bottom:4px solid #6246a5}h1{color:#30204f;font-size:clamp(1.4rem,4vw,2rem);margin:0}
+header p{color:#596579;margin:6px 0 0}main{max-width:850px;margin:24px auto;padding:0 15px}
+.card{border:1px solid #dce1ea;border-radius:14px;padding:22px;margin:14px 0;box-shadow:0 3px 12px #1720330a}
+.meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.pill{background:#f2effa;color:#39266a;border-radius:20px;padding:6px 12px;font-weight:bold}
+.bar{height:9px;background:#eee;border-radius:8px;margin:14px 0 20px;overflow:hidden}#fill{height:100%;background:#6246a5;width:0}
+.topic{color:#6246a5;font-size:.78rem;font-weight:bold;text-transform:uppercase;letter-spacing:.08em}
+h2{font-size:1.2rem;margin:8px 0 16px}.options{display:grid;gap:10px}
+.option{display:flex;gap:10px;padding:12px;border:1px solid #dce1ea;border-radius:9px;cursor:pointer}
+.option:has(input:checked){background:#f2effa;border-color:#6246a5}input{accent-color:#6246a5;margin-top:5px}
+button{border:0;border-radius:8px;padding:11px 17px;font-weight:bold;cursor:pointer}
+.primary{background:#6246a5;color:white}.secondary{background:#eceaf2;color:#30264a}
+button:disabled{opacity:.45;cursor:not-allowed}.actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+details{margin-top:14px;color:#6246a5}details p,.small{color:#596579}.feedback{display:none;margin-top:15px;padding:13px;background:#f4f5f8;border-radius:8px}
+.feedback.show{display:block}.good{border-left:4px solid #147a46}.bad{border-left:4px solid #b42318}
+#result{display:none;text-align:center}#review{text-align:left;margin-top:24px}.reviewitem{padding:12px 0;border-bottom:1px solid #ddd}
+footer{text-align:center;color:#596579;font-size:.85rem;padding:20px}
+</style></head>
+<body>
+<header><h1>Chapter 1 – Class 3 Quiz</h1><p>Cambridge IGCSE Computer Science 0984 | Data representation, storage and compression</p></header>
+<main>
+<section id="quiz">
+<div class="meta"><span class="pill" id="count"></span><span class="pill" id="score">Score: 0</span></div>
+<div class="bar"><div id="fill"></div></div>
+<div class="card"><div class="topic" id="topic"></div><h2 id="question"></h2><div class="options" id="options"></div>
+<details><summary><b>Show hint</b></summary><p id="hint"></p></details>
+<div class="actions"><button class="primary" id="check" onclick="checkAnswer()">Check answer</button><button class="secondary" id="next" onclick="nextQuestion()" disabled>Next question →</button></div>
+<div class="feedback" id="feedback" aria-live="polite"></div></div>
+<p class="small">Show your calculations on paper before checking your answer.</p></section>
+<section class="card" id="result"><h2>Quiz complete!</h2><p id="final"></p><p id="message"></p>
+<div class="actions" style="justify-content:center"><button class="primary" onclick="start()">Try again</button><button class="secondary" onclick="print()">Print results</button></div><div id="review"></div></section>
+</main><footer>Revision practice – read the explanations carefully after each answer.</footer>
+<script>
+const Q=[
+["Character sets","What is a character set?",["A collection of characters a computer can represent, with a code for each","A list of processor instructions","A method of compressing images","A collection of stored files"],0,"Think about how letters, digits and symbols are represented.","A character set defines the characters that can be represented and the code associated with each character."],
+["ASCII","Traditional ASCII uses 7 bits. How many different patterns can it represent?",["64","128","256","512"],1,"The number of patterns represented by n bits is 2 to the power n.","2⁷ = 128 possible patterns."],
+["Extended ASCII","How many different values can be represented using 8 bits?",["128","192","256","512"],2,"Use 2ⁿ to calculate the possible patterns.","2⁸ = 256. Extended ASCII code pages use 8 bits, although mappings of the extra values differ."],
+["Unicode","Why was Unicode developed?",["To represent characters from many languages and symbols","To make every character exactly 7 bits","To replace binary with decimal","To compress every text file"],0,"Think about writing systems not represented by basic ASCII.","Unicode provides code points for a very wide range of writing systems, symbols and emoji."],
+["UTF","What does UTF stand for?",["Universal Text Function","Unicode Transformation Format","United Type Format","Unicode Transfer File"],1,"It names a family of Unicode encoding formats.","UTF stands for Unicode Transformation Format."],
+["UTF-8","Which statement about UTF-8 is correct?",["Every character uses exactly 8 bits","It uses 1 to 4 bytes per character","Every character uses exactly 16 bits","It supports only ASCII"],1,"UTF-8 is a variable-length encoding.","UTF-8 uses 1–4 bytes (8–32 bits) per code point. Basic ASCII characters use one byte."],
+["UTF-16 and UTF-32","Which statement is correct?",["UTF-16 always uses 8 bits; UTF-32 uses 16","UTF-16 uses 16 or 32 bits; UTF-32 uses 32 bits","Both always use 8 bits","UTF-32 uses 1 to 4 bytes"],1,"Compare the number of bytes used by each encoding.","UTF-16 uses 2 bytes for most code points and 4 bytes for some. UTF-32 uses 4 bytes per code point."],
+["Sound","What is sample rate?",["Bits used for each sample","Number of samples taken per second","Loudness of the sound","Number of audio channels"],1,"It describes how frequently the analogue sound is measured.","Sample rate is the number of samples taken each second, measured in hertz (Hz)."],
+["Sound","A sound is sampled at 12,000 Hz. How many samples are taken in one second?",["120","1,200","12,000","120,000"],2,"Hz means per second.","12,000 Hz means 12,000 samples each second."],
+["Sample resolution","What does sample resolution (bit depth) determine?",["Samples taken per second","Bits used to represent each sample","Duration of the recording","Number of speakers"],1,"It affects the number of possible amplitude values.","Sample resolution is the number of bits used for each sound sample."],
+["Sound calculation","A mono sound lasts 10 s, sample rate 8,000 Hz and resolution 8 bits. What is its uncompressed size in bytes?",["8,000","40,000","80,000","640,000"],2,"Bits = duration × sample rate × resolution. Divide by 8 for bytes.","10 × 8,000 × 8 = 640,000 bits. 640,000 ÷ 8 = 80,000 bytes."],
+["Sound quality","If sample rate increases and all other settings stay the same, what happens to uncompressed file size?",["Decreases","Stays the same","Increases","Becomes zero"],2,"More samples are stored each second.","A higher sample rate stores more samples per second, increasing file size."],
+["Bitmap images","What does bitmap resolution describe?",["Number of pixels across and down","Number of colours","File name length","Loading speed"],0,"It is usually written as width × height.","Resolution describes pixel dimensions, for example 800 × 600 pixels."],
+["Colour depth","An image has a colour depth of 4 bits per pixel. How many colours can each pixel represent?",["4","8","16","32"],2,"Use 2 raised to the number of bits.","2⁴ = 16 possible values."],
+["Bitmap calculation","A bitmap is 100 × 50 pixels with 8-bit colour depth. What is its uncompressed size in bytes, ignoring metadata?",["625","5,000","40,000","400,000"],1,"Multiply width × height × colour depth, then divide by 8.","100 × 50 × 8 = 40,000 bits. 40,000 ÷ 8 = 5,000 bytes."],
+["Bitmap calculation","An image is 256 × 128 pixels with 16-bit colour depth. What is its size in KiB, ignoring metadata?",["32 KiB","64 KiB","128 KiB","512 KiB"],1,"Calculate bits, convert to bytes, then divide by 1,024.","256 × 128 × 16 = 524,288 bits. ÷ 8 = 65,536 bytes. ÷ 1,024 = 64 KiB."],
+["Bitmap size","A bitmap is 200 × 100 pixels with 8-bit colour depth. If its width alone is doubled, what happens to file size?",["It doubles","It becomes four times larger","It is halved","It stays the same"],0,"Total pixels = width × height.","Doubling width doubles the number of pixels, so file size doubles if other settings stay the same."],
+["Storage units","Which is the correct binary relationship?",["1 KiB = 1,000 bytes","1 KiB = 1,024 bytes","1 KiB = 1,000,000 bytes","1 KiB = 8 bytes"],1,"Binary units use powers of 1,024.","1 KiB = 1,024 bytes. Decimal KB is 1,000 bytes."],
+["Binary vs decimal","Which statement correctly distinguishes MB from MiB?",["1 MB = 1,024 bytes; 1 MiB = 1,000 bytes","1 MB = 1,000,000 bytes; 1 MiB = 1,048,576 bytes","MB and MiB always mean the same quantity","1 MB = 8 bytes; 1 MiB = 16 bytes"],1,"MB uses a decimal power; MiB uses a binary power.","1 MB = 1,000,000 bytes. 1 MiB = 1,024 × 1,024 = 1,048,576 bytes."],
+["Storage conversion","How many bytes are in 3 MiB?",["3,000,000","3,145,728","3,072","3,221,225,472"],1,"1 MiB = 1,024 × 1,024 bytes. Multiply by 3.","3 × 1,024 × 1,024 = 3,145,728 bytes."],
+["Storage units","Which sequence lists binary units from smaller to larger?",["KiB, MiB, GiB, TiB, PiB, EiB","KB, KiB, MB, MiB, GB, GiB","MiB, KiB, GiB, EiB, PiB","EiB, PiB, TiB, GiB, MiB"],0,"Each step is 1,024 times the previous unit.","The sequence is KiB, MiB, GiB, TiB, PiB, EiB."],
+["Compression","What is the main difference between lossy and lossless compression?",["Lossy permanently removes some data; lossless allows exact reconstruction","Lossy always makes files larger","Lossless removes details; lossy restores every bit","There is no difference"],0,"Ask whether the original data can be reconstructed exactly.","Lossy discards information. Lossless preserves all information and permits exact reconstruction."],
+["Compression","Which is a commonly used lossy image format?",["PNG","ZIP","JPEG","FLAC"],2,"Think of a common compressed photograph format.","JPEG commonly uses lossy compression. PNG, ZIP and FLAC are lossless formats."],
+["RLE","Using RLE, how can AAAAABBCC be represented?",["5A2B2C","A5B2C2","5A2B3C","AABBC"],0,"Write the number of consecutive repeats followed by the value.","AAAAA = 5A, BB = 2B and CC = 2C. The result is 5A2B2C."],
+["RLE","When is run-length encoding likely to be most effective?",["When data has long runs of repeated values","When every value is different","When data is random","When image resolution is high"],0,"RLE stores a value and the number of consecutive repetitions.","RLE works well when values repeat consecutively, such as large areas of one colour in a simple bitmap."],
+["Audio compression","Which statement about lossy audio compression is accurate?",["It may remove less noticeable sounds masked by louder sounds","It stores every original sample exactly","It always increases sample resolution","It converts audio into text"],0,"Consider audio information listeners are less likely to notice.","Lossy audio compression may discard less noticeable information, including quiet sounds masked by louder sounds."]
+];
+let order=[],idx=0,score=0,done=false,history=[];
+const el=id=>document.getElementById(id);
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function start(){order=shuffle(Q.map((_,i)=>i));idx=0;score=0;history=[];el("quiz").style.display="block";el("result").style.display="none";render()}
+function render(){done=false;let q=Q[order[idx]];el("count").textContent=`Question ${idx+1} of ${order.length}`;el("score").textContent=`Score: ${score}`;el("fill").style.width=`${idx/order.length*100}%`;el("topic").textContent=q[0];el("question").textContent=q[1];el("options").innerHTML="";
+q[2].forEach((v,i)=>{let l=document.createElement("label");l.className="option";let r=document.createElement("input");r.type="radio";r.name="ans";r.value=i;let s=document.createElement("span");s.textContent=String.fromCharCode(65+i)+". "+v;l.append(r,s);el("options").append(l)});
+el("hint").textContent=q[4];el("feedback").className="feedback";el("feedback").textContent="";el("check").disabled=false;el("next").disabled=true;el("next").textContent=idx===order.length-1?"See results":"Next question →"}
+function checkAnswer(){if(done)return;let selected=document.querySelector('input[name="ans"]:checked');if(!selected){alert("Please select an answer first.");return}done=true;let q=Q[order[idx]],choice=+selected.value,ok=choice===q[3];if(ok)score++;history.push({q,choice,ok});document.querySelectorAll('input[name="ans"]').forEach(x=>x.disabled=true);let f=el("feedback");f.className="feedback show "+(ok?"good":"bad");f.innerHTML="<b>"+(ok?"Correct!":"Not quite.")+"</b>"+q[5];el("score").textContent="Score: "+score;el("check").disabled=true;el("next").disabled=false}
+function nextQuestion(){if(!done)return;if(idx<Q.length-1){idx++;render()}else results()}
+function results(){el("quiz").style.display="none";el("result").style.display="block";let pct=Math.round(score/Q.length*100);el("final").textContent=`You scored ${score} out of ${Q.length} (${pct}%).`;el("message").textContent=pct>=85?"Excellent work!":pct>=65?"Good effort. Review the explanations below.":"Keep practising and try again after revising.";el("review").innerHTML="<h3>Answer review</h3>"+history.map((x,i)=>`<div class="reviewitem"><b>${i+1}. ${x.q[1]}</b><br><span style="color:${x.ok?'#147a46':'#b42318'}">${x.ok?'Your answer was correct.':'Your answer: '+x.q[2][x.choice]}</span><br>Correct answer: ${x.q[2][x.q[3]]}<br><span class="small">${x.q[5]}</span></div>`).join("");el("fill").style.width="100%"}
+start();
+</script></body></html>
