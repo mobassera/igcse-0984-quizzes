@@ -1,16 +1,576 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Class 2 Quiz 1</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>0984 Chapter 1 Class 2 Quiz 1</title>
+
+<style>
+:root {
+  --purple: #56318b;
+  --line: #ddd;
+  --ink: #202124;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: #f7f7fa;
+  color: var(--ink);
+  font: 16px/1.5 Arial, sans-serif;
+}
+
+header {
+  background: white;
+  border-bottom: 4px solid var(--purple);
+  padding: 25px 18px;
+}
+
+header div, main {
+  max-width: 850px;
+  margin: auto;
+}
+
+h1 {
+  color: var(--purple);
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.1rem);
+}
+
+.sub { color: #666; margin: 5px 0 0; }
+
+main { padding: 20px 15px 45px; }
+
+.intro, .q, .result {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 15px;
+}
+
+.intro { border-left: 5px solid var(--purple); }
+
+.bar {
+  height: 8px;
+  background: #e8e3ee;
+  border-radius: 9px;
+  margin: 8px 0 18px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--purple);
+  border-radius: 9px;
+}
+
+.meta {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: .9rem;
+}
+
+.q h2 { font-size: 1.06rem; margin: 0 0 14px; }
+
+.tag {
+  color: var(--purple);
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.opts { display: grid; gap: 8px; }
+
+.opt {
+  display: flex;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.opt:hover { background: #faf8fd; }
+
+.opt input {
+  accent-color: var(--purple);
+  margin-top: 5px;
+}
+
+.opt.good {
+  background: #eff9f2;
+  border-color: #72b68d;
+}
+
+.opt.bad {
+  background: #fff2f1;
+  border-color: #d99;
+}
+
+.fb {
+  display: none;
+  background: #f1f0f4;
+  border-radius: 8px;
+  padding: 10px;
+  margin-top: 10px;
+}
+
+.fb.show { display: block; }
+
+details { margin-top: 12px; }
+
+summary {
+  color: var(--purple);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  padding: 12px 17px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  margin: 8px 7px 8px 0;
+}
+
+.primary { background: var(--purple); color: white; }
+
+.secondary {
+  background: #e9e5ef;
+  color: #30283b;
+}
+
+.result {
+  display: none;
+  border-top: 5px solid var(--purple);
+}
+
+.score {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--purple);
+}
+
+.muted { color: #666; font-size: .9rem; }
+
+@media print {
+  body { background: white; }
+  .actions, details { display: none; }
+  .q, .intro { break-inside: avoid; }
+}
+</style>
 </head>
-<body style="background:white;color:black;font-family:Arial">
 
-<h1>Chapter 1 – Class 2</h1>
-<h2>Quiz 1 – Binary Addition</h2>
+<body>
 
-<p>Quiz coming soon!</p>
+<header>
+  <div>
+    <h1>Cambridge IGCSE Computer Science 0984</h1>
+    <p class="sub">Chapter 1 · Class 2 · Binary Arithmetic and Representation Quiz</p>
+  </div>
+</header>
 
-<a href="../../../../index.html">Back to Home</a>
+<main>
+
+<section class="intro">
+  <b>Topics covered</b>
+  <p>
+    8-bit binary addition, carry-in and carry-out, overflow,
+    logical shifts, MSB and LSB, 1's complement,
+    2's complement, signed integers and why 2's complement is used.
+  </p>
+  <b>Instructions:</b>
+  Select one answer unless asked to select all that apply.
+  Open hints if needed, then submit to see your score and explanations.
+</section>
+
+<div class="meta">
+  <span id="count">0 of 15 answered</span>
+  <span id="pct">0%</span>
+</div>
+
+<div class="bar"><span id="fill"></span></div>
+
+<form id="quiz"></form>
+
+<div class="actions">
+  <button class="primary" id="submit" type="button">Submit quiz</button>
+  <button class="secondary" id="reset" type="button">Try again</button>
+  <button class="secondary" id="print" type="button">Print / Save as PDF</button>
+</div>
+
+<section class="result" id="result">
+  <h2>Quiz results</h2>
+  <div class="score" id="score"></div>
+  <p id="message"></p>
+  <p class="muted" id="detail"></p>
+</section>
+
+</main>
+
+<script>
+
+const Q = [
+
+["single",
+"What is the value of the LSB (Least Significant Bit) in 10110110?",
+["The leftmost bit, 1","The rightmost bit, 0","The fourth bit, 1","The leftmost bit, 0"],
+[1],
+[
+"The leftmost bit is the MSB, not the LSB.",
+"The rightmost bit has the lowest place value and is the LSB.",
+"The fourth bit is not the least significant position.",
+"The leftmost bit is 1 and represents the MSB."
+],
+"Consider which end represents the units column."
+],
+
+["single",
+"In an 8-bit binary number, which bit is the MSB (Most Significant Bit)?",
+["The rightmost bit","The second bit from the right","The leftmost bit","The middle bit"],
+[2],
+[
+"The rightmost bit is the LSB.",
+"This bit has place value 2, not the highest place value.",
+"The leftmost bit has the highest place value.",
+"The middle bit does not have the highest place value."
+],
+"Think about the bit with the greatest place value."
+],
+
+["single",
+"Calculate: 00010110 + 00001001.",
+["00011111","00011011","00100001","00010111"],
+[0],
+[
+"22 + 9 = 31, which is 00011111.",
+"This represents 27, not 31.",
+"This represents 33, not 31.",
+"This represents 23, not 31."
+],
+"Add from the rightmost column, carrying when needed."
+],
+
+["single",
+"Calculate the 8-bit result: 01100101 + 00110110.",
+["10011011","10001011","01111011","10111011"],
+[0],
+[
+"101 + 54 = 155, which is 10011011.",
+"This represents 139, not 155.",
+"This represents 123, not 155.",
+"This represents 187, not 155."
+],
+"Work column by column and include each carry."
+],
+
+["single",
+"In one binary column, the incoming carry is 1. What is 1 + 1 + 1?",
+["Sum bit 0, carry-out 1","Sum bit 1, carry-out 0","Sum bit 0, carry-out 0","Sum bit 1, carry-out 1"],
+[3],
+[
+"Binary 11 has sum bit 1 and carry-out 1; this option has the wrong sum bit.",
+"This represents 1, not 3.",
+"This represents 0, not 3.",
+"1 + 1 + 1 = 3 denary = 11 binary: sum bit 1, carry-out 1."
+],
+"Add the three values in denary, then express the result in binary."
+],
+
+["tf",
+"A carry-out from the MSB of an 8-bit unsigned addition means the result cannot be represented within 8 bits.",
+["True","False"],
+[0],
+[
+"A carry-out means the unsigned sum is greater than 255, so it needs more than 8 bits.",
+"The carry-out shows that the unsigned result exceeds 255."
+],
+"Recall the largest denary value stored in 8 unsigned bits."
+],
+
+["single",
+"Add 11110000 + 00100000 as 8-bit unsigned integers. Give the 8-bit result and carry-out.",
+["00010000, carry-out 1","00010000, carry-out 0","00001000, carry-out 1","11110000, carry-out 0"],
+[0],
+[
+"240 + 32 = 272. The lower 8 bits are 00010000, with carry-out 1.",
+"The 8-bit result is right, but the carry-out is 1.",
+"This is not the lower 8-bit result of 272.",
+"This omits the contribution of the second number."
+],
+"Convert both numbers to denary and compare their sum with 255."
+],
+
+["tf",
+"In 8-bit 2's complement, the MSB has a positive place value of 128.",
+["True","False"],
+[1],
+[
+"In signed 2's complement, the MSB has a negative weight of −128.",
+"The MSB has a negative weight of −128 in 8-bit 2's complement."
+],
+"Compare the MSB place value in unsigned binary and signed 2's complement."
+],
+
+["single",
+"What is the 1's complement of 00101101?",
+["11010010","11010011","00101110","10110010"],
+[0],
+[
+"Every bit is inverted: 0 becomes 1 and 1 becomes 0.",
+"This adds 1 as well, which is part of the 2's complement process.",
+"This changes only the least significant bit.",
+"Several bit positions have not been inverted correctly."
+],
+"Invert every bit without adding anything."
+],
+
+["single",
+"What is the 8-bit 2's complement representation of −13?",
+["11110011","11110010","00001101","11101101"],
+[0],
+[
+"13 is 00001101; invert to 11110010 and add 1 to get 11110011.",
+"This is the 1's complement; the final 1 has not been added.",
+"This represents positive 13.",
+"This is not obtained by inverting all bits and adding 1."
+],
+"Start with positive 13 in 8-bit binary, then apply both steps."
+],
+
+["single",
+"What denary value does 11111011 represent as an 8-bit 2's complement number?",
+["−5","−4","251","+5"],
+[0],
+[
+"Invert to 00000100 and add 1 to get 00000101, so the value is −5.",
+"This is the value before adding 1.",
+"251 is the unsigned interpretation, not signed 2's complement.",
+"The MSB is 1, indicating a negative value."
+],
+"Since the MSB is 1, determine the magnitude using 2's complement."
+],
+
+["multi",
+"Which statements about 8-bit 2's complement are correct? Select all that apply.",
+[
+"It can represent positive and negative integers.",
+"The range is −128 to +127.",
+"Negative values are formed by inverting the bits and adding 1.",
+"The range is −127 to +128."
+],
+[0,1,2],
+[
+"It represents both signs; positive values have MSB 0 and negative values MSB 1.",
+"Eight-bit 2's complement ranges from −128 to +127.",
+"This is the standard method for forming the 2's complement.",
+"The endpoints are reversed; the actual range is −128 to +127."
+],
+"Consider the sign bit, conversion method and number of possible patterns."
+],
+
+["single",
+"Why is 2's complement commonly used to represent signed integers?",
+[
+"It allows addition and subtraction to use the same binary adder circuitry.",
+"It removes the need to store positive numbers.",
+"It makes every negative number start with 0.",
+"It gives two different representations of zero."
+],
+[0],
+[
+"2's complement allows signed addition and subtraction using the same basic binary addition hardware.",
+"Positive numbers still need to be represented.",
+"Negative 8-bit 2's complement values have MSB 1.",
+"2's complement has a single representation of zero."
+],
+"Think about how computer hardware can perform arithmetic efficiently."
+],
+
+["single",
+"What is the result of a logical right shift of 10110100 by 2 positions?",
+["00101101","11101101","10110100","01011010"],
+[0],
+[
+"Bits move two positions right and two zeros enter from the left.",
+"A logical right shift inserts zeros, not copies of the original MSB.",
+"This is unchanged.",
+"This is a shift right by one position."
+],
+"Move bits right twice; discard bits leaving the right end and fill left with zeros."
+],
+
+["single",
+"What is the result of a logical left shift of 00101101 by 2 positions, keeping exactly 8 bits?",
+["10110100","00001011","10110101","01011010"],
+[0],
+[
+"Shifting left twice gives 10110100; bits beyond 8 bits are discarded.",
+"This resembles a right shift, not a left shift.",
+"This does not follow the two-position left shift.",
+"This is the result of shifting left by one position."
+],
+"Move bits towards the MSB, discard bits leaving the left end and fill right with zeros."
+]
+
+];
+
+const form = document.getElementById('quiz');
+let done = false;
+
+function picked(i) {
+  return [...form.querySelectorAll(`[name="q${i}"]:checked`)]
+    .map(x => +x.value);
+}
+
+function progress() {
+  let n = Q.filter((q,i) => picked(i).length).length;
+  document.getElementById('count').textContent =
+    `${n} of ${Q.length} answered`;
+  document.getElementById('pct').textContent =
+    Math.round(n/Q.length*100) + '%';
+  document.getElementById('fill').style.width =
+    (n/Q.length*100) + '%';
+}
+
+Q.forEach((q,i) => {
+
+  let s = document.createElement('section');
+  s.className = 'q';
+
+  let tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.textContent = `QUESTION ${i+1} · ${
+    q[0] === 'multi' ? 'MULTI-SELECT' :
+    q[0] === 'tf' ? 'TRUE / FALSE' : 'SINGLE ANSWER'
+  }`;
+
+  let h = document.createElement('h2');
+  h.textContent = q[1];
+
+  s.append(tag,h);
+
+  let os = document.createElement('div');
+  os.className = 'opts';
+
+  q[2].forEach((v,j) => {
+
+    let l = document.createElement('label');
+    l.className = 'opt';
+    l.id = `o${i}_${j}`;
+
+    let inp = document.createElement('input');
+    inp.type = q[0] === 'multi' ? 'checkbox' : 'radio';
+    inp.name = 'q'+i;
+    inp.value = j;
+    inp.addEventListener('change',progress);
+
+    let t = document.createElement('span');
+    t.textContent = q[0] === 'tf'
+      ? v
+      : String.fromCharCode(65+j)+'. '+v;
+
+    l.append(inp,t);
+    os.append(l);
+
+  });
+
+  s.append(os);
+
+  let fb = document.createElement('div');
+  fb.className = 'fb';
+  fb.id = 'f'+i;
+  s.append(fb);
+
+  let d = document.createElement('details');
+  let su = document.createElement('summary');
+  su.textContent = 'Show hint';
+
+  let p = document.createElement('p');
+  p.textContent = q[5];
+
+  d.append(su,p);
+  s.append(d);
+
+  form.append(s);
+
+});
+
+document.getElementById('submit').onclick = () => {
+
+  if(done) return;
+
+  let score = 0;
+  let answered = 0;
+
+  Q.forEach((q,i) => {
+
+    let sel = picked(i);
+    if(sel.length) answered++;
+
+    let ok = sel.length === q[3].length &&
+      q[3].every(x => sel.includes(x));
+
+    if(ok) score++;
+
+    q[2].forEach((_,j) => {
+
+      let el = document.getElementById(`o${i}_${j}`);
+
+      if(q[3].includes(j)) el.classList.add('good');
+      else if(sel.includes(j)) el.classList.add('bad');
+
+      el.querySelector('input').disabled = true;
+
+    });
+
+    let f = document.getElementById('f'+i);
+
+    f.textContent =
+      (ok ? 'Your answer is correct. ' : 'Review: ') +
+      q[3].map(j => q[4][j]).join(' ');
+
+    f.classList.add('show');
+
+  });
+
+  done = true;
+
+  document.getElementById('submit').disabled = true;
+
+  document.getElementById('score').textContent =
+    `${score} / ${Q.length}`;
+
+  document.getElementById('message').textContent =
+    score === 15
+      ? 'Excellent work — full marks!'
+      : score >= 11
+        ? 'Good work. Review the explanations for missed questions.'
+        : 'Keep practising and revisit the worked examples before trying again.';
+
+  document.getElementById('detail').textContent =
+    `You answered ${answered} of ${Q.length}. Unanswered questions count as incorrect.`;
+
+  document.getElementById('result').style.display = 'block';
+
+  document.getElementById('result').scrollIntoView({
+    behavior: 'smooth'
+  });
+
+};
+
+document.getElementById('reset').onclick = () => location.reload();
+
+document.getElementById('print').onclick = () => window.print();
+
+progress();
+
+</script>
 
 </body>
 </html>
